@@ -84,7 +84,7 @@ class GPIOBackend(object):
                 "message": str(e),
             }
 
-def api_response(results, **opts):
+def api_response(results = (), **opts):
     status = any(r.get("error", None) for r in results) and 500 or 200
 
     return web.json_response({"status": status, **opts}, status=status)
@@ -99,7 +99,12 @@ async def status(request, backend):
 
     results = await backend.run_commands((("read", id) for id in backend.get_all_input()))
 
-    return api_response(results, gpio = {r["argument"]: r["result"] for r in results if not "error" in r})
+    return api_response(results, input = {r["argument"]: r["result"] for r in results if not "error" in r})
+
+async def home(request, backend):
+
+    return api_response(input = tuple(backend.get_all_input()), output = tuple(backend.get_all_output()))
+
 
 def create_app(debug=False, mode=None, **opts):
 
@@ -117,7 +122,8 @@ def create_app(debug=False, mode=None, **opts):
             )
         ]
     )
-    app.add_routes([web.get(r"/", partial(status, backend=backend))])
+    app.add_routes([web.get(r"/status/", partial(status, backend=backend))])
+    app.add_routes([web.get(r"/", partial(home, backend=backend))])
 
     return app
 
