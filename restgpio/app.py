@@ -101,7 +101,7 @@ async def status(request, backend):
 
     return api_response(results, gpio = {r["argument"]: r["result"] for r in results if not "error" in r})
 
-def create_app(debug=False, mode=None, **opts)
+def create_app(debug=False, mode=None, **opts):
 
     backend = GPIOBackend(
         gpio=(debug and DebugGPIO or RaspberryGPIO)(mode=mode),
