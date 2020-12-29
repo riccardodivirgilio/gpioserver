@@ -20,7 +20,7 @@ def webserver_arguments(parser):
         "input-pull-up",
         "input-pull-down",
         "output",
-        "ouput-low",
+        "output-low",
         "output-high",
     ):
         parser.add_argument(
