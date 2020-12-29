@@ -27,7 +27,8 @@ class GPIOBackend(object):
 
     async def wait(self, milliseconds):
         wait = max(0, min(milliseconds, self.max_wait))
-        await asyncio.sleep(wait / 1000)
+        if wait:
+            await asyncio.sleep(wait / 1000)
         return wait
 
     async def high(self, n):
