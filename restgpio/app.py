@@ -26,7 +26,7 @@ class GPIOBackend(object):
         self.max_wait = max_wait or 2000
 
     async def wait(self, milliseconds):
-        wait = min(max(0, milliseconds), self.max_wait)
+        wait = max(0, min(milliseconds, self.max_wait))
         await asyncio.sleep(wait / 1000)
         return wait
 
@@ -110,11 +110,12 @@ async def home(request, backend):
     return api_response(input = tuple(backend.get_all_input()), output = tuple(backend.get_all_output()))
 
 
-def create_app(debug=False, mode=None, **opts):
+def create_app(debug=False, mode=None, max_wait=None, **opts):
 
     backend = GPIOBackend(
         gpio=(debug and DebugGPIO or RaspberryGPIO)(mode=mode),
         gpio_modes={v: k for k, values in opts.items() for v in values or ()},
+        max_wait=max_wait,
     )
 
     app = web.Application()
