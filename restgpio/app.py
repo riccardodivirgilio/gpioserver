@@ -15,7 +15,7 @@ def get_commands(request):
         yield cmd, int(value)
 
 class GPIOBackend(object):
-    def __init__(self, gpio, gpio_modes={}):
+    def __init__(self, gpio, gpio_modes={}, max_wait = None):
         self.gpio = gpio
         self.gpio_modes = {i: "input" for i in range(1, 27)}
         self.gpio_modes.update(gpio_modes)
@@ -23,8 +23,12 @@ class GPIOBackend(object):
         for n, mode in self.gpio_modes.items():
             self.gpio.setup(mode, n)
 
+        self.max_wait = max_wait or 2000
+
     async def wait(self, milliseconds):
-        return await asyncio.sleep(milliseconds / 1000)
+        wait = min(max(0, milliseconds), self.max_wait)
+        await asyncio.sleep(wait / 1000)
+        return wait
 
     async def high(self, n):
         return await self.gpio.output(self.assert_output(n), high=True)

@@ -12,7 +12,9 @@ def webserver_arguments(parser):
     parser.add_argument(
         "--debug", action="store_true", help="Run in debug mode, all operations are faked."
     )
-
+    parser.add_argument(
+        "--max-wait", dest="max_wait", help="Insert the maximum time for the wait command, defaults to 2000."
+    )
     for mode in (
         "input",
         "input-pull-up",
