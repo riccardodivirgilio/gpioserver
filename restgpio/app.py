@@ -101,7 +101,7 @@ async def status(request, backend):
 
     return api_response(results, gpio = {r["argument"]: r["result"] for r in results if not "error" in r})
 
-def run_app(port=None, host=None, debug=False, mode=None, **opts):
+def create_app(debug=False, mode=None, **opts)
 
     backend = GPIOBackend(
         gpio=(debug and DebugGPIO or RaspberryGPIO)(mode=mode),
@@ -119,4 +119,7 @@ def run_app(port=None, host=None, debug=False, mode=None, **opts):
     )
     app.add_routes([web.get(r"/", partial(status, backend=backend))])
 
-    return web.run_app(app, port=port, host=host or "0.0.0.0")
+    return app
+
+def run_app(port=None, host=None, **opts):
+    return web.run_app(create_app(**opts), port=port, host=host or "0.0.0.0")
