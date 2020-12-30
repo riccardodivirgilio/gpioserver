@@ -118,8 +118,6 @@ async def home(request, backend):
 
 def create_app(debug=False, mode=None, max_wait=None, gpio_modes = None):
 
-    raise Exception(gpio_modes)
-
     backend = GPIOBackend(
         gpio=(debug and DebugGPIO or RaspberryGPIO)(mode=mode),
         gpio_modes=gpio_modes,
