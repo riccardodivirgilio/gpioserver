@@ -1,6 +1,11 @@
 
 from setuptools import setup, find_packages
 
+# to publish:
+# python3 setup.py sdist bdist_wheel  
+# twine check dist/* 
+# twine upload dist/*
+
 setup(
     name = 'gpioserver',
     version = '1.0.0',
