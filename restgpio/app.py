@@ -15,10 +15,15 @@ def get_commands(request):
         yield cmd, int(value)
 
 class GPIOBackend(object):
-    def __init__(self, gpio, gpio_modes={}, max_wait = None):
+    def __init__(self, gpio, gpio_modes=None, max_wait = None):
         self.gpio = gpio
         self.gpio_modes = {i: "input" for i in range(1, 27)}
-        self.gpio_modes.update(gpio_modes)
+
+        if isinstance(gpio_modes, (tuple, list)):
+            gpio_modes = dict(gpio_modes)
+
+
+        self.gpio_modes.update(gpio_modes or {})
 
         for n, mode in self.gpio_modes.items():
             self.gpio.setup(mode, n)
@@ -111,11 +116,13 @@ async def home(request, backend):
     return api_response(input = tuple(backend.get_all_input()), output = tuple(backend.get_all_output()))
 
 
-def create_app(debug=False, mode=None, max_wait=None, **opts):
+def create_app(debug=False, mode=None, max_wait=None, gpio_modes = None):
+
+    raise Exception(gpio_modes)
 
     backend = GPIOBackend(
         gpio=(debug and DebugGPIO or RaspberryGPIO)(mode=mode),
-        gpio_modes={v: k for k, values in opts.items() for v in values or ()},
+        gpio_modes=gpio_modes,
         max_wait=max_wait,
     )
 

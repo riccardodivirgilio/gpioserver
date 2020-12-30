@@ -1,19 +1,44 @@
 from restgpio.app import run_app
 
 import argparse
-import sys
+import sys, os
 
-def webserver_arguments(parser):
-    parser.add_argument("--port", default=None, help="Insert the port.")
-    parser.add_argument("--host", default=None, help="Insert the host.")
-    parser.add_argument(
-        "--mode", default=None, type=int, help="Insert board mode, defaults to BCM"
+def add_argument(parser, argv, name, split_by = False, **opts):
+    parser.add_argument("--" + name, **opts)
+
+    try:
+        value = os.environ['RESTGPIO_%s' % name.replace('-', '_').upper()]
+    except KeyError:
+        value = None
+
+    if value:
+        argv.append("--" + name)
+        argv.append(value)
+
+def make_mode_validator(mode):
+    def gpio(v):
+        return (
+            tuple(map(int, v.split(','))),
+            mode
+        )
+    return gpio
+
+def webserver_parser():
+
+    parser = argparse.ArgumentParser(prog="Run a rest api to control GPIO")
+
+    args = []
+
+    add_argument(parser, args, "port", default=None, help="Insert the port.")
+    add_argument(parser, args, "host", default=None, help="Insert the host.")
+    add_argument(
+        parser, args, "mode", default=None, type=int, help="Insert board mode, defaults to BCM"
     )
-    parser.add_argument(
-        "--debug", action="store_true", help="Run in debug mode, all operations are faked."
+    add_argument(
+        parser, args, "debug", action="store_true", help="Run in debug mode, all operations are faked."
     )
-    parser.add_argument(
-        "--max-wait", dest="max_wait", type=int, help="Insert the maximum time for the wait command, defaults to 2000."
+    add_argument(
+        parser, args, "max-wait", dest="max_wait", type=int, help="Insert the maximum time for the wait command, defaults to 2000."
     )
     for mode in (
         "input",
@@ -23,15 +48,20 @@ def webserver_arguments(parser):
         "output-low",
         "output-high",
     ):
-        parser.add_argument(
-            "--" + mode, dest=mode.replace("-", "_"), type=int, nargs="*", default=None
+        add_argument(
+            parser, args, mode, dest='gpio_modes', action='append', type=make_mode_validator(mode), nargs="*", default=None
         )
+
+    return parser, args 
 
 def main(argv=sys.argv[1:], **opts):
 
-    parser = argparse.ArgumentParser(prog="Run a rest api to control GPIO")
-    webserver_arguments(parser)
+    parser, args = webserver_parser()
 
-    cmd_options = vars(parser.parse_args(argv))
-    args = cmd_options.pop("args", ())
-    return run_app(*args, **cmd_options)
+    cmd_options = vars(parser.parse_args(args + argv))
+
+    #unpacking gpio_modes
+
+    cmd_options['gpio_modes'] = dict((c, mode) for a in (cmd_options['gpio_modes'] or ()) for b, mode in a for c in b)
+
+    return run_app(**cmd_options)
