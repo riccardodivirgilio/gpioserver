@@ -23,7 +23,7 @@ def make_mode_validator(mode):
         )
     return gpio
 
-def webserver_parser():
+def get_parser_with_env():
 
     parser = argparse.ArgumentParser(prog="Run a rest api to control GPIO")
 
@@ -56,7 +56,7 @@ def webserver_parser():
 
 def main(argv=sys.argv[1:], **opts):
 
-    parser, args = webserver_parser()
+    parser, args = get_parser_with_env()
 
     cmd_options = vars(parser.parse_args(args + argv))
 
