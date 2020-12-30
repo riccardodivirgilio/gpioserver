@@ -62,6 +62,6 @@ def main(argv=sys.argv[1:], **opts):
 
     #unpacking gpio_modes
 
-    cmd_options['gpio_modes'] = dict((c, mode) for a in (cmd_options['gpio_modes'] or ()) for b, mode in a for c in b)
+    cmd_options['gpio_modes'] = dict((c, mode.replace('-', '_')) for a in (cmd_options['gpio_modes'] or ()) for b, mode in a for c in b)
 
     return run_app(**cmd_options)

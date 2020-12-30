@@ -22,10 +22,10 @@ class RaspberryGPIO(object):
     def setup_input(self, n):
         return self.GPIO.setup(n, self.GPIO.IN)
 
-    def setup_input_pull_up(self, id):
+    def setup_input_pull_up(self, n):
         return self.GPIO.setup(n, self.GPIO.IN, pull_up_down=self.GPIO.PUD_UP)
 
-    def setup_input_pull_down(self, id):
+    def setup_input_pull_down(self, n):
         return self.GPIO.setup(n, self.GPIO.IN, pull_up_down=self.GPIO.PUD_DOWN)
 
     def setup_output(self, n):
