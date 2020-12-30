@@ -1,4 +1,4 @@
-from restgpio.app import run_app
+from gpioserver.app import run_app
 
 import argparse
 import sys, os
@@ -7,7 +7,7 @@ def add_argument(parser, argv, name, split_by = False, **opts):
     parser.add_argument("--" + name, **opts)
 
     try:
-        value = os.environ['RESTGPIO_%s' % name.replace('-', '_').upper()]
+        value = os.environ['GPIOSERVER_%s' % name.replace('-', '_').upper()]
     except KeyError:
         value = None
 

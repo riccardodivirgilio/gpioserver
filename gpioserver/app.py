@@ -2,7 +2,7 @@ from aiohttp import web
 
 from functools import partial
 
-from restgpio.gpio import DebugGPIO, RaspberryGPIO
+from gpioserver.gpio import DebugGPIO, RaspberryGPIO
 
 import asyncio
 

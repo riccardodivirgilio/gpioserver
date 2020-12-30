@@ -1,4 +1,4 @@
-from restgpio.cli import main
+from gpioserver.cli import main
 
 if __name__ == '__main__':
     main()
