@@ -7,8 +7,8 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'gpioserver',
-    version = '1.0.3',
-    description = 'A Python library with various tools to start a wolfram engine a server content.',
+    version = '1.0.4',
+    description = 'A Python library to start a gpio server for your raspberry pi.',
     keywords=['Raspberry PI', 'GPIO', 'aiohttp', 'api'],
     author = 'Riccardo Di Virgilio',
     python_requires='>=3.5.3',
