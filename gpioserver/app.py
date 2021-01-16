@@ -43,7 +43,10 @@ class GPIOBackend(object):
         return await self.gpio.output(self.assert_output(n), high=False)
 
     async def read(self, n):
-        return await self.gpio.input(self.assert_input(n))
+        return await self.gpio.input(self.assert_pin(n))
+
+    def __iter__(self):
+        yield from self.gpio_modes.keys()
 
     def get_all_input(self):
         return filter(self.is_input, self.gpio_modes.keys())
@@ -62,6 +65,11 @@ class GPIOBackend(object):
             return self.gpio_modes[n].startswith("input")
         except KeyError:
             return False
+
+    def assert_pin(self, n):
+        if not n in self.gpio_modes:
+            raise ValueError("Not a pin")
+        return n
 
     def assert_output(self, n):
         if not self.is_output(n):
@@ -107,7 +115,7 @@ async def command(request, backend):
 
 async def status(request, backend):
 
-    results = await backend.run_commands((("read", id) for id in backend.get_all_input()))
+    results = await backend.run_commands((("read", id) for id in backend))
 
     return api_response(results, input = {r["argument"]: r["result"] for r in results if not "error" in r})
 
